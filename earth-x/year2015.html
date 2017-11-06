@@ -1,0 +1,146 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ECharts-X">
+    <meta name="author" content="voidqueens@hotmail.com">
+    <title>Countries Connection</title>
+
+
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/example.css">
+    <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="css/monokai.css">
+    <link rel="stylesheet" href="css/twilight.css">
+</head>
+
+<body>
+<main id="main">
+    <div id="chart"></div>
+</main>
+<div id="editor">
+    <textarea></textarea>
+    <div id="editor-toolbar">
+        <button id="editor-update">Update</button>
+        <button id="editor-refresh">Refresh All</button>
+        <button id="editor-close">Close</button>
+    </div>
+</div>
+
+<script src="lib/esl.js"></script>
+<script src="lib/jquery.min.js"></script>
+<script src="js/bootExample.js"></script>
+<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" id="code-source">
+
+    myChart.showLoading();
+
+    $.ajax({
+        url: './year/2016.json',
+        success: function (data) {
+            var markPointStyle = {
+                normal: {
+                    color: 'red'
+                }
+            }
+
+            // Airport: [name, city, country, longitude, latitude]
+            var countries = data.countries.map(function (item) {
+                return {
+                    itemStyle: markPointStyle,
+                    geoCoord: [item['longitude'], item['latitude']]
+                }
+            });
+
+            var lineGroupByGrade = {};
+            data.lines.forEach(function (line) {
+                var gradeName='route';
+                if (!lineGroupByGrade[gradeName]) {
+                    lineGroupByGrade[gradeName] = [];
+                }
+                lineGroupByGrade[gradeName].push(line);
+            })
+
+            var opts = {
+                title: {
+                    text: 'Google Scholar Connection',
+                    subtext: 'Data from Hazelnut',
+                    sublink: 'http://openflights.org/data.html',
+                    x: 'center',
+                    y: 'top',
+                    textStyle: {
+                        color: 'white'
+                    }
+                },
+                tooltip: {
+                    formatter: '{b}'
+                },
+                series: [{
+                    type: 'map3d',
+                    mapType: 'world',
+                    baseLayer: {
+                        backgroundColor: '',
+                        backgroundImage: 'asset/earth.jpg'
+                    },
+                    itemStyle: {
+                        normal: {
+                            borderWidth: 1,
+                            borderColor: 'yellow',
+                            areaStyle: {
+                                color: 'rgba(0, 0, 0, 0)'
+                            }
+                        }
+                    },
+                    markPoint: {
+                        effect: {
+                            shadowBlur: 0.2
+                        },
+                        large: true,
+                        symbolSize: 3,
+                        data: countries
+                    }
+                }]
+            };
+
+            var lines_route = lineGroupByGrade['route'];
+            if (lines_route) {
+                opts.series.push({
+                    type: 'map3d',
+                    name: 'high',
+                    markLine: {
+                        effect: {
+                            show: true
+                        },
+                        distance: 0.01,
+                        itemStyle: {
+                            normal: {
+                                width: 0.1,
+                                color: 'red',
+                                opacity: 0.1
+                            }
+                        },
+                        data: lines_route.map(function (item) {
+                            return [{
+                                // Source airport
+                                geoCoord: [item['longitude_1'], item['latitude_1']]
+                            }, {
+                                // Destination Airport
+                                geoCoord: [item['longitude_2'], item['latitude_2']]
+                            }]
+                        })
+                    }
+                });
+            }
+
+            myChart.setOption(opts);
+            myChart.hideLoading();
+        }
+    });
+</script>
+</body>
+</html>
