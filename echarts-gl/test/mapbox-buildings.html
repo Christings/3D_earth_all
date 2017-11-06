@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Map3D - ECHARTS-GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
+        <link rel="stylesheet" href="./common.css">
+    </head>
+    <body>
+        <div id="main"></div>
+        <script src="https://rawgit.com/ecomfe/echarts/master/dist/echarts.min.js"></script>
+        <script src="../dist/echarts-gl.js"></script>
+        <script src='lib/mapbox-gl.js'></script>
+        <link href='lib/mapbox-gl.css' rel='stylesheet' />
+        <script src="lib/jquery.min.js"></script>
+        <script src="lib/dat.gui.js"></script>
+        <script>
+            mapboxgl.accessToken = window.location.search.slice(1);
+            var chart = echarts.init(document.getElementById('main'));
+
+            chart.showLoading();
+            $.getJSON('data/buildings.json', function (buildingsGeoJSON) {
+                chart.hideLoading();
+                // buildingsGeoJSON.features = buildingsGeoJSON.features.slice(0, 10);
+                echarts.registerMap('buildings', buildingsGeoJSON);
+
+                var regions = echarts.parseGeoJSON(buildingsGeoJSON);
+                var regionsData = buildingsGeoJSON.features.map(function (feature) {
+                    return {
+                        name: feature.properties.name,
+                        value: Math.random(),
+                        height: +feature.properties.height * 10
+                    };
+                });
+
+                chart.setOption({
+                    mapbox: {
+                        center: [13.409779, 52.520645],
+                        zoom: 13,
+                        pitch: 50,
+                        bearing: -10,
+                        style: 'mapbox://styles/mapbox/dark-v9',
+                        postEffect: {
+                            enable: true,
+                            screenSpaceAmbientOcclusion: {
+                                enable: true,
+                                intensity: 1.2,
+                                radius: 10
+                            },
+                            screenSpaceReflection: {
+                                enable:true
+                            },
+                            edge: {
+                                enable: false,
+                                color: [2, 8, 16]
+                            }
+                        },
+                        light: {
+                            main: {
+                                intensity: 1,
+                                shadow: false,
+                                shadowQuality: 'high'
+                            },
+                            ambient: {
+                                intensity: 0.
+                            },
+                            ambientCubemap: {
+                                texture: 'asset/pisa.hdr',
+                                exposure: 1,
+                                diffuseIntensity: 0.5,
+                                specularIntensity: 2
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'map3D',
+                        coordinateSystem: 'mapbox',
+                        map: 'buildings',
+                        data: regionsData,
+                        shading: 'realistic',
+                        instancing: true,
+                        silent: true,
+                        itemStyle: {
+                            borderColor: [0, 2, 10],
+                            borderWidth: 1
+                        },
+                        realisticMaterial: {
+                            metalness: 1,
+                            roughness: 0.4,
+                            // detailTexture: 'asset/iron-rusted4/iron-rusted4-basecolor.jpg',
+                            // metalness: 'asset/iron-rusted4/iron-rusted4-metalness.jpg',
+                            // roughness: 'asset/iron-rusted4/iron-rusted4-roughness.jpg',
+                            // normalTexture: 'asset/iron-rusted4/iron-rusted4-normal.jpg',
+                            textureTiling: [10, 10]
+                        }
+                    }]
+                });
+
+                var mapbox = chart.getModel().getComponent('mapbox').getMapbox();
+                var current = 0;
+                function flyToNextPoint() {
+                    var randRegion = regions[Math.round(Math.random() * (regions.length - 1))];
+                    mapbox.flyTo({
+                        center: randRegion.center,
+                        zoom: 14 + Math.random(),
+                        speed: 0.3,
+                        curve: 1
+                    });
+                }
+
+                window.addEventListener('keydown', function (e) {
+                    if (e.keyCode === 32) {
+                        flyToNextPoint();
+                    }
+                });
+
+                var config = {
+                    roughness: 0.4
+                }
+
+                var gui = new dat.GUI();
+                gui.add(config, 'roughness', 0.1, 0.9).onFinishChange(function () {
+                    chart.setOption({
+                        series: [{
+                            realisticMaterial: {
+                                roughness: config.roughness
+                            }
+                        }]
+                    });
+                })
+            });
+
+            window.addEventListener('resize', function () {
+                chart.resize();
+            });
+
+        </script>
+    </body>
+</html>

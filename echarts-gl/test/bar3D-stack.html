@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Bar3D Stack - ECHARTS-GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
+        <link rel="stylesheet" href="./common.css">
+    </head>
+    <body>
+        <div id="main"></div>
+        <script src="../node_modules/echarts/dist/echarts.js"></script>
+        <script src="../dist/echarts-gl.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script src="lib/simplex.js"></script>
+        <script>
+            var chart = echarts.init(document.getElementById('main'));
+
+            function generateData() {
+                var data = [];
+                var noise = new SimplexNoise(Math.random);
+                for (var i = 0; i <= 10; i++) {
+                    for (var j = 0; j <= 10; j++) {
+                        var value = noise.noise2D(i / 5, j / 5);
+                        data.push([i, j, value * 2 + 4]);
+                    }
+                }
+                return data;
+            }
+
+            var series = [];
+            for (var i = 0; i < 10; i++) {
+                series.push({
+                    type: 'bar3D',
+                    data: generateData(),
+                    stack: 'stack',
+                    shading: 'lambert'
+                })
+            }
+
+            chart.setOption({
+                xAxis3D: {
+                    type: 'value'
+                },
+                yAxis3D: {
+                    type: 'value'
+                },
+                zAxis3D: {
+                    type: 'value'
+                },
+                grid3D: {
+                    axisLine: {
+                        lineStyle: { color: '#fff' }
+                    },
+                    axisPointer: {
+                        lineStyle: { color: '#fff' }
+                    },
+                    viewControl: {
+                        // autoRotate: true
+                    },
+                    light: {
+                        main: {
+                            shadow: true,
+                            quality: 'ultra',
+                            intensity: 1.5
+                        }
+                    }
+                },
+                series: series
+            });
+
+            window.onresize = chart.resize;
+        </script>
+    </body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Map3D - ECHARTS-GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
+        <link rel="stylesheet" href="./common.css">
+    </head>
+    <body>
+        <div id="main"></div>
+        <script src="../node_modules/echarts/dist/echarts.js"></script>
+        <script src="../node_modules/echarts/map/js/china.js"></script>
+        <script src="../dist/echarts-gl.js"></script>
+        <script src='lib/mapbox-gl.js'></script>
+        <link href='lib/mapbox-gl.css' rel='stylesheet' />
+        <script src="lib/jquery.min.js"></script>
+        <script>
+            mapboxgl.accessToken = window.location.search.slice(1);
+            var chart = echarts.init(document.getElementById('main'));
+
+            $.getJSON('./data/alcohol.json', function (data) {
+
+                chart.setOption({
+                    visualMap: {
+                        show: false,
+                        max: 1000,
+                        calculable: true,
+                        realtime: false,
+                        inRange: {
+                            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                        },
+                        outOfRange: {
+                            colorAlpha: 0
+                        }
+                    },
+                    mapbox: {
+                        center: [104.114129, 37.550339],
+                        zoom: 3,
+                        pitch: 50,
+                        bearing: -10,
+                        style: 'mapbox://styles/mapbox/light-v9',
+                        altitudeScale: 1e5,
+                        postEffect: {
+                            enable: true,
+                            screenSpaceAmbientOcclusion: {
+                                enable: true,
+                                intensity: 1,
+                                radius: 3,
+                                quality: 'high'
+                            }
+                        },
+                        light: {
+                            main: {
+                                intensity: 1,
+                                shadow: true,
+                                shadowQuality: 'high'
+                            },
+                            ambient: {
+                                intensity: 0.
+                            },
+                            ambientCubemap: {
+                                texture: 'asset/canyon.hdr',
+                                exposure: 2,
+                                diffuseIntensity: 0.5
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'map3D',
+                        coordinateSystem: 'mapbox',
+                        map: 'china',
+                        regionHeight: 0.5,
+                        shading: 'lambert'
+                    }]
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                chart.resize();
+            });
+
+        </script>
+    </body>
+</html>

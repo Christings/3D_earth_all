@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Reflection - ECHARTS-GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
+        <link rel="stylesheet" href="./common.css">
+    </head>
+    <body>
+        <div id="main"></div>
+        <script src="../node_modules/echarts/dist/echarts.js"></script>
+        <script src="../node_modules/echarts/map/js/world.js"></script>
+        <script src="../dist/echarts-gl.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script>
+            var chart = echarts.init(document.getElementById('main'));
+
+            $.getJSON('data/world-population.json', function (populationData) {
+                var max = -Infinity;
+                var min = Infinity;
+                populationData.forEach(function (item) {
+                    max = Math.max(Math.log(item.value), max);
+                    min = Math.min(Math.log(item.value), min);
+                });
+
+                var regions = populationData.map(function (item) {
+                    return {
+                        name: item.name,
+                        height: (Math.log(item.value) - min) / (max - min) * 3
+                    };
+                })
+
+                chart.setOption({
+                    backgroundColor: '#cdcfd5',
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    geo3D: {
+                        map: 'world',
+                        shading: 'realistic',
+                        realisticMaterial: {
+                            textureTiling: [4, 4],
+                            detailTexture: 'asset/iron-rusted4/iron-rusted4-basecolor.jpg',
+                            normalTexture: 'asset/iron-rusted4/iron-rusted4-normal.jpg',
+                            roughness: 'asset/iron-rusted4/iron-rusted4-roughness.jpg',
+                            metalness: 'asset/iron-rusted4/iron-rusted4-metalness.jpg'
+                        },
+                        light: {
+                            main: {
+                                intensity: 5,
+                                shadow: true,
+                                shadowQuality: 'high',
+                                alpha: 30
+                            },
+                            ambient: {
+                                intensity: 0
+                            },
+                            ambientCubemap: {
+                                texture: 'asset/canyon.hdr',
+                                exposure: 2,
+                                diffuseIntensity: 1
+                            }
+                        },
+                        viewControl: {
+                            distance: 50
+                        },
+                        groundPlane: {
+                            show: true,
+                            color: '#222',
+                            realisticMaterial: {
+                                detailTexture: 'none',
+                                roughness: 0.6,
+                                metalness: 1
+                            }
+                        },
+                        postEffect: {
+                            enable: true,
+                            bloom: {
+                                enable: true
+                            },
+                            screenSpaceAmbientOcclusion: {
+                                radius: 1,
+                                intensity: 1,
+                                enable: true,
+                                quality: 'high'
+                            },
+                            screenSpaceReflection: {
+                                enable: true
+                            }
+                            // depthOfField: {
+                            //     enable: true,
+                            //     focalRange: 10,
+                            //     blurRadius: 3,
+                            //     fstop: 1
+                            // }
+                        },
+                        temporalSuperSampling: {
+                            enable: true
+                        },
+                        itemStyle: {
+                            areaColor: '#aaa'
+                        },
+
+                        emphasis: {
+                            itemStyle: {
+                                areaColor: [20, 8, 4]
+                            },
+                            label: {
+                                show: false
+                            }
+                        },
+
+                        regions: regions,
+
+                        regionHeight: 2
+                    }
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                chart.resize();
+            });
+
+        </script>
+    </body>
+</html>

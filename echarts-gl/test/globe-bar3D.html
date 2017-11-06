@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Bar 3D - ECHARTS-GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
+        <link rel="stylesheet" href="./common.css">
+    </head>
+    <body>
+        <div id="main"></div>
+        <script src="../node_modules/echarts/dist/echarts.js"></script>
+        <script src="../dist/echarts-gl.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script>
+            var chart = echarts.init(document.getElementById('main'));
+
+            $.getJSON('./data/population.json', function (data) {
+
+                data = data.filter(function (dataItem) {
+                    return dataItem[2] > 0;
+                }).map(function (dataItem) {
+                    return [dataItem[0], dataItem[1], Math.sqrt(dataItem[2])];
+                });
+
+                chart.setOption({
+                    globe: {
+                        // baseTexture: 'asset/earth.jpg',
+                        baseTexture: 'asset/world.topo.bathy.200401.jpg',
+                        heightTexture: 'asset/elev_bump_4k.jpg',
+
+                        displacementScale: 0.1,
+
+                        shading: 'lambert',
+
+                        postEffect: {
+                            enable: true,
+                            SSAO: {
+                                enable: true,
+                                radius: 5,
+                                intensity: 1.5,
+                                quality: 'high'
+                            }
+                        },
+
+                        light: {
+                            ambient: {
+                                intensity: 0
+                            },
+                            main: {
+                                intensity: 2,
+                                shadow: true,
+                                shadowQuality: 'high'
+                            },
+                            ambientCubemap: {
+                                texture: 'asset/pisa.hdr',
+                                exposure: 2,
+                                diffuseIntensity: 1,
+                                specularIntensity: 1
+                            }
+                        },
+
+                        viewControl: {
+                            autoRotate: false
+                        }
+                    },
+                    visualMap: {
+                        max: 40,
+                        calculable: true,
+                        realtime: false,
+                        inRange: {
+                            colorLightness: [0.2, 0.9]
+                        },
+                        outOfRange: {
+                            colorAlpha: 0
+                        }
+                    },
+                    series: [{
+                        type: 'bar3D',
+                        coordinateSystem: 'globe',
+                        shading: 'lambert',
+                        // data: [[0, 0, 10]],
+                        data: data,
+                        // barSize: 0.6,
+                        // bevelSize: 0.1,
+                        // bevelSmoothness: 1,
+                        minHeight: 0.2,
+                        silent: true,
+                        itemStyle: {
+                            color: 'orange'
+                        }
+                    }]
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                chart.resize();
+            });
+
+        </script>
+    </body>
+</html>
