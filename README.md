@@ -1,7 +1,7 @@
 ## 1.worldFlights
 ### 所用框架：philogl
 ### 位置：examples\worldFlights
-### philogl(https://github.com/senchalabs/philogl)官方项目下的一个demo，把全球飞行航线路线在3D地球上表示出来。
+### philogl(https://github.com/senchalabs/philogl)官方项目下的一个demo，把全球飞行航线在3d地球上表示出来。
 ## 2.airline_china
 ### 所用框架：philogl
 ### 一位博主基于philogl官方项目的demo改写而成，把全球的飞行路线改为了中国飞行路线(参照:examples\worldFlights)
