@@ -16,6 +16,6 @@
 ## 6.earth
 ### 所用框架：echarts-gl
 ### 基于echarts3D-globe重写了一个适合自己需要的精简的地球
-## 7.earth
+## 7.earth-x
 ### 所用框架：echarts-x
 ### 基于3dmap重写了一个适合自身需要的最终地球。
