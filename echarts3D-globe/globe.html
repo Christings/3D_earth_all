@@ -1,0 +1,503 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Globe - ECHARTS-GL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Fullscreen Landscape on iOS -->
+    <style>
+        body{font-size: 12px;}
+        ul,li{list-style: none;margin: 0;padding: 0}
+        li{line-height: 16px}
+        .clearfix{overflow: hidden;}
+        .under{position: absolute;bottom: 0;left: 0;width: 100%;height: 33%}
+        .fn-left{float: left;display: inline;}
+        .title-col{color: #fff}
+        .ml-10{margin-left: 10%;}
+        .ml-11{margin-left: 11%;}
+        .ml-8{margin-left: 8%;}
+        .ml-7{margin-left: 7%;}
+        .ml-4{margin-left: 4%;}
+        .ml-65{margin-left: 6.5%;}
+        .ml-5{margin-left: 5%;}
+        .marl-5{margin-left: 5%;}
+        .ml-6{margin-left: 6%;}
+        .ml-9{margin-left: 9%;}
+        .ml-32{margin-left: 13%;}
+        .ml-14{margin-left: 14%;}
+        .ml-2{margin-left: 2%;}
+        .ml-3{margin-left: 3%;}
+
+        #main{position: absolute;top: 0;left: 0;width: 100%;height: 100%;}
+        .right-content{width: 29%;height: 64%;position: absolute;right: 10px;top: 10px;border-left: 4px solid #0BB1BC}
+        #right{width: 29%;height: 25%;background-color: #0B1A1F !important;position: absolute;top: 10px;right: 10px;opacity: 0.8;border:1px solid #0BB1BC;}
+        #right1{width: 100%;height: 38%;position: absolute;top: 0;right: 0;}
+        .row,.col{position:absolute; padding:3% 5%;border-style: solid;border-color: #0BB1BC;z-index: 1}
+        #right2{width: 100%;height: 59%;position: absolute;top: 41%;right: 0;border:1px solid #0BB1BC;color: #0CB3C0;}
+        .right2-content{background-color: #0A181B;opacity: 0.7;padding-bottom: 2%;height: 84%}
+        .right2-content li{height: 10%}
+
+        .right-arrow{background: url(hideLeft.png) no-repeat;display: block;height: 36px;width: 9px;position: absolute;right: 29.3%;top:24.5%;z-index: 11}
+
+        .row1 {border-width: 3px 0 0 0;top:-2px;left:-4px;}
+        .row2 {border-width: 3px 3px 0 0;top:0;right:0;}
+        .col1 {border-width: 0 0 3px 3px; bottom:-5px;left:-2px;}
+        .col2 {border-width: 0 3px 3px 0; bottom:-7px;right:0;}
+
+        .row3 {border-width: 3px 0 0 3px;top:-1px;left:-1px;}
+        .row4 {border-width: 3px 3px 0 0;top:-1px;right:-1px;}
+        .col3 {border-width: 0 0 3px 0; bottom:-2px;left:-3px;}
+        .col4 {border-width: 0 3px 3px 0; bottom:-1px;right:-1px;}
+
+        .attack-title{margin-left: 10px}
+        .attack-location{width: 17%;height: 100%;position: relative;}
+        .attack-header{background-color: #09171A; color: #0CB3C0;padding:5px 0 5px 0;font-size: 14px;width: 100%}
+        .attack-location-content{background-color: #04090C;color: #0CB3C0;opacity: 0.5;padding: 0 0 5px 20px;}
+        
+        .hide-need{position: absolute;bottom: 0;width: 100%}
+
+        .attack-type{width: 17%;margin-left: 9px;height: 100%;position: relative;}
+        .attack-type-content{background-color: #04090C;color: #0CB3C0;opacity: 0.5;padding: 0 0 5px 20px;}
+     
+        .attack-event{width: 64.5%;margin-left: 9px; height: 100%;position: relative;}
+        .attack-event-content{background-color: #04090C;color: #0CB3C0;opacity: 0.5;padding: 0 0 5px 20px;}
+        .attack-event-content span{display: inline-block;vertical-align: top;}
+        /*.attack-event-content li{}
+        .attack-event-content li:nth-child(1){margin-top: 0;}*/
+        .top10-class{color: #D00608;float: right;margin-right: 10px;}
+
+        .flow-modal{padding: 10px 15px 10px 12px;color: #0CB3C0;background-color: #071014;opacity: 0.8;display: none;border-radius: 2px;border:1px solid #363637;position: absolute;}
+        .attack-way{overflow: hidden;text-overflow: ellipsis;width: 7%;white-space:nowrap;}
+        .down-hide{background: url(slidedown.png) no-repeat;display: block;height: 15px;width: 25px;position: absolute;left: 10px;bottom: 34%;}
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+    <div class="right" id="right">
+    </div>
+    <span class="right-arrow"></span>
+      <div class="right-content">
+        <div id="right1">
+            <span class="row row1"></span>
+            <span class="row row2"></span>
+            <span class="col col2"></span>
+            <span class=""></span>
+        </div>
+        <div id="right2">
+            <span class=""></span>
+            <span class="row row4"></span>
+            <span class="col col4"></span>
+            <span class="col col3"></span>
+            <div class="attack-header">捕获攻击者信息</div>
+            <div class="right2-content">
+                <ul>
+                    <li><span class="title-col ml-2">攻击源IP</span><span class="title-col ml-11">地理位置</span><span class="title-col ml-3">攻击payload</span><span class="title-col ml-14">时间</span></li>
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+
+                    <li><span class="ml-2">172.168.2.112</span><span class="ml-3">江苏南京</span><span class="ml-3">client useCopyRect</span><span class="ml-4">2017/06/24 13:24</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <span class="down-hide"></span>
+    <div class="under clearfix">
+        <div class="attack-location fn-left">
+            <div class="attack-header need-hide"><span class="attack-title">攻击地域排行</span><span class="top10-class">Top10</span></div>
+            <div class="attack-location-content">
+                <ul>
+                    <li><span class="title-col">次数</span><span class="title-col ml-32">地域</span></li>
+                    <li><span>528</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>460</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>420</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>390</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>385</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>360</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>340</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>290</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>280</span><span class="ml-32">江苏省南京市</span></li>
+                    <li><span>260</span><span class="ml-32">江苏省南京市</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="attack-type fn-left">
+            <div class="attack-header need-hide"><span class="attack-title">攻击类型排行</span><span class="top10-class">Top10</span></div>
+            <div class="attack-type-content">
+                <ul>
+                    <li><span class="title-col">次数</span><span class="title-col ml-32">端口</span><span class="title-col ml-32">类型</span></li>
+                    <li><span>528</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>460</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>420</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>390</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>385</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>360</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>340</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>290</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>280</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                    <li><span>260</span><span class="ml-32">8080</span><span class="ml-32">http-alt</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="attack-event fn-left">
+            <div class="attack-header need-hide"><span class="attack-title">攻击事件</span></div>
+            <div class="attack-event-content">
+                <ul>
+                    <li><span class="title-col">攻击源</span><span class="title-col ml-9">攻击地区</span><span class="title-col ml-4">被攻击IP</span><span class="title-col ml-7">被攻击地区</span><span class="title-col ml-65">端口</span><span class="title-col marl-5">攻击次数</span><span class="title-col ml-4">攻击方式</span><span class="title-col ml-8">时间</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood,floodfloodfloodfloodfloodflood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+
+                    <li><span>172.168.2.112</span><span class="ml-4">江苏南京</span><span class="ml-4">172.168.2.112</span><span class="ml-4">河南郑州</span><span class="ml-7">8080</span><span class="ml-7">6</span><span class="ml-7 attack-way">flood</span><span class="ml-6">2017-06-23 12:13</span></li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+
+        <div class="flow-modal">
+                攻击方式: <span class="title-col">flood、Stacheldrant、Ssl_dos、Ping of Death、Sql dos</span>
+        </div>
+    <script src="echarts/dist/echarts.js"></script>
+    <script src="echarts/map/js/world.js"></script>
+    <script src="echarts-gl.js"></script>
+    <script src="jquery.min.js"></script>
+    <script>
+         //悬浮
+    $(".attack-event-content").on('mouseover', '.attack-way', function () {
+        var x = this.offsetLeft-400;
+        var y = this.offsetTop+420;
+        $(".flow-modal").css({ 'display': 'block', 'left': x, 'top': y });
+
+    })
+    $(".attack-event-content").on('mouseout', '.attack-way', function () {
+        $(".flow-modal").css('display', 'none');
+    })
+
+    //点击展开收缩
+    var tool=true;
+    $('.down-hide').on('click',function(){
+        var x="";
+        var y="";
+        
+
+        if(tool){
+            $(this).css('background','url(slideup.png) no-repeat')
+            $('.attack-location-content').css('display','none');
+            $('.attack-type-content').css('display','none');
+            $('.attack-event-content').css('display','none');
+            x=this.offsetTop+180;
+            $(this).css('top',x);
+            $('.need-hide').addClass('hide-need')
+            tool=false;
+
+        }else{
+            alert(1)
+            $(this).css('background','url(slidedown.png) no-repeat');
+            $('.need-hide').removeClass('hide-need')
+            $('.attack-location-content').css('display','block');
+            $('.attack-type-content').css('display','block');
+            $('.attack-event-content').css('display','block');
+            tool=true;
+        }
+        
+    })
+
+        var right = echarts.init(document.getElementById('right'));
+        var chart = echarts.init(document.getElementById('main'));
+
+        // var canvas = document.createElement('canvas');
+        // var mapChart = echarts.init(canvas, null, {
+        //     width: 4096, height: 2048
+        // });
+
+        right.setOption({
+                grid:{
+                    top:"25%",
+                    left:'15%',
+                    bottom: '17%'
+                },
+                color:['#D00608','#0CB3C0'],
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:[{
+                        name:"报警日志",
+                        textStyle:{color:"D00608"}
+                    },{
+                        name:"所有日志",
+                        textStyle:{color:"0CB3C0"}
+                    }]
+                },
+                xAxis:  {
+
+                    type: 'category',          
+                    boundaryGap: false,
+                    nameLocation:"start",
+                    data: ['7时','8时','9时','10时','11时','12时','13时','14时','15时','16时','17时','18时'],
+                    splitLine:{show:true,lineStyle:{color:'#1A282B'}},
+                    axisLine:{lineStyle:{color:"#1A282B"}},
+                    axisLabel:{
+                        interval:0,
+                        textStyle:{color:"#0CB3C0"}
+                    }
+                },
+                yAxis: {
+                    name:"/条",
+                    type: 'value',
+                    nameGap:10,
+                    offset:10,
+                    min:500,
+                    data:[1500,2000,2500,3000,3500,4000],
+                    nameTextStyle:{color:"#0CB3C0"},
+                    splitLine:{show:false},
+                    axisTick:{show:false},
+                    axisLine:{show:false},
+                    axisLabel:{
+                        textStyle:{color:"#0CB3C0"}
+                    }
+                },
+                series: [
+                    {
+                        name:'报警日志',
+                        type:'line',
+                        symbol:"circle",
+                        symbolSize:6,
+                        data:[1500, 2000, 1750, 2100, 1800, 2200, 1560,2050,1710,1662,2200,1900],
+                        itemStyle:{
+                        normal:{
+                            color:"#D00608",
+                            lineStyle:{color:"#D00608"}
+                            }
+                        }
+                    },
+                    {
+                        name:'所有日志',
+                        type:'line',
+                        symbol:"circle",
+                        symbolSize:6,
+                        data:[2000, 2300, 2100, 2400, 2203, 2424, 2010,2596,2111,2333,2212,3090],
+                        itemStyle:{
+                        normal:{
+                            color:"#0CB3C0",
+                            lineStyle:{color:"#0CB3C0"}
+                            }
+                        }
+                    }
+                ]
+
+
+        })
+
+        // mapChart.setOption({
+        //     backgroundColor: '#010204',
+        //     visualMap: {
+        //         show: false,
+        //         min: 0,
+        //         max: 500000
+        //     },
+        //     series:[{
+        //         type: 'map',
+        //             map: 'world',
+        //             top: 0,
+        //             left: 0,
+        //             right: 0,
+        //             bottom: 0,
+        //             boundingCoords: [[-180, 90], [180, -90]]
+        //     }]
+            
+        // }),
+
+        // https://www.behance.net/gallery/50293671/T-GLOBE
+
+        $.getJSON('flights.json', function (data) {
+            var airports = data.airports.map(function (item) {
+                return {
+                    coord: [item[3], item[4]]
+                }
+            });
+            function getAirportCoord(idx) {
+                
+                return [data.airports[idx][3], data.airports[idx][4]];
+
+            }
+
+            // Route: [airlineIndex, sourceAirportIndex, destinationAirportIndex]
+            var routesGroupByAirline = {};
+            data.routes.forEach(function (route) {
+                
+                var airline = data.airlines[route[0]];
+                var airlineName = airline[0];
+                if (!routesGroupByAirline[airlineName]) {
+                    routesGroupByAirline[airlineName] = [];
+                }
+                routesGroupByAirline[airlineName].push(route);
+            });
+
+            var pointsData = [];
+            data.routes.forEach(function (airline) {
+                pointsData.push(getAirportCoord(airline[0]));
+                pointsData.push(getAirportCoord(airline[1]));
+            });
+
+            var series = data.airlines.map(function (airline) {
+                var airlineName = airline[0];
+                var routes = routesGroupByAirline[airlineName];
+
+                if (!routes) {
+                    return null;
+                }
+                return {
+                    type: 'lines3D',
+                    name: airlineName,
+
+                    effect: {
+                        show: true,
+                        trailWidth: 2,
+                        trailLength: 0.2,
+                        trailOpacity: 0.4,
+                        trailColor: '#6BAAC3'
+                    },
+
+                    lineStyle: {
+                        width: 3,
+                        color: '#6BAAC3',
+                        // color: 'rgb(118, 233, 241)',
+                        opacity: 0.1
+                    },
+                    blendMode: 'lighter',
+
+                    distanceToGlobe: 4,
+
+                    data: routes.map(function (item) {
+                        return [airports[item[1]].coord, airports[item[2]].coord];
+                    })
+                };
+            }).filter(function (series) {
+                return !!series;
+            });
+            
+           // series.push({
+           //      type: 'scatter3D',
+           //      coordinateSystem: 'globe',
+           //      symbolSize: 5,
+           //      itemStyle: {
+           //          normal:{color: 'red',
+           //          opacity: 1,}
+                    
+           //          // borderWidth:2,
+           //          // borderColor:'#fff'
+           //      },
+           //      data: pointsData
+           //  })
+            
+            chart.setOption({
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     },
+                //     iconStyle: {
+                //         normal: {
+                //             borderColor: '#fff'
+                //         }
+                //     }
+                // },
+                // legend: {
+                //     selectedMode: 'single',
+                //     left: 'left',
+                //     data: Object.keys(routesGroupByAirline),
+                //     orient: 'vertical',
+                //     textStyle: {
+                //         color: '#fff'
+                //     }
+                // },
+                globe: {
+                    baseTexture: 'earth.jpg',
+                    environment: '#1D4551',
+
+                    heightTexture: 'earth.jpg',
+
+
+                    displacementScale: 0.1,
+                    displacementQuality: 'low',
+
+                    shading: 'lambert',
+
+                   
+                    light: {
+                        ambient: {
+                            intensity: 0.1
+                        },
+                        main: {
+                            intensity: 1.5
+                        }
+                    },
+                    viewControl: {
+                        autoRotate: true
+                    },
+                    silent: true,
+                    layers: [{
+                        type: 'overlay',
+                        blendTo: 'lambert',
+                        texture: 'clouds.png',
+                        distance: 10
+                    }]
+                },
+
+                series: series,
+                // debug:{
+                //     wireframe:{show:true,lineStyle:{color:'#fff'}},
+
+                // }
+                
+            });
+            // window.addEventListener('keydown', function () {
+            //     series.forEach(function (series, idx) {
+            //         chart.dispatchAction({
+            //             type: 'lines3DToggleEffect',
+            //             seriesIndex: idx
+            //         });
+            //     })
+            // });
+        });
+
+        window.addEventListener('resize', function () {
+            chart.resize();
+        });
+    </script>
+</body>
+
+</html>
