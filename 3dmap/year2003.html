@@ -1,0 +1,310 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ECharts-X">
+    <meta name="author" content="shenyi.914@gmail.com">
+    <title>Google Scholar Connection</title>
+
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/example.css">
+    <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="css/monokai.css">
+    <link rel="stylesheet" href="css/twilight.css">
+    <style type="text/css">
+
+        /* SELECT W/IMAGE */
+
+        /*SELECT W/DOWN-ARROW*/
+        select#selectPointOfInterest
+        {
+            width                    : 185pt;
+            height                   : 40pt;
+            line-height              : 40pt;
+            padding-right            : 20pt;
+            text-indent              : 4pt;
+            text-align               : center;
+            vertical-align           : middle;
+            box-shadow               : inset 0 0 3px #606060;
+            border                   : 1px solid #acacac;
+            -moz-border-radius       : 6px;
+            -webkit-border-radius    : 6px;
+            border-radius            : 6px;
+            -webkit-appearance       : none;
+            -moz-appearance          : none;
+            appearance               : none;
+            font-family              : Arial,  Calibri, Tahoma, Verdana;
+            font-size                : 18pt;
+            font-weight              : 500;
+            color                    : #000099;
+            cursor                   : pointer;
+            outline                  : none;
+        }
+        select#selectPointOfInterest option
+        {
+            padding             : 4px 10px 4px 10px;
+            font-size           : 5pt;
+            font-weight         : normal;
+        }
+        select#selectPointOfInterest option[selected]{ font-weight:bold}
+        select#selectPointOfInterest option:nth-child(even) { background-color:#f5f5f5; }
+        select#selectPointOfInterest:hover {font-weight: 700;}
+        select#selectPointOfInterest:focus {box-shadow: inset 0 0 5px #000099; font-weight: 600;}
+
+    </style>
+<body>
+<header id="header">
+    <ul class="links">
+        <select id="selectPointOfInterest" onchange="javascript:location.href=this.value;">
+            <option value="year2000.html">2000</option>
+            <option value="year2001.html">2001</option>
+            <option value="year2002.html">2002</option>
+            <option value="year2003.html" selected="selected">2003</option>
+            <option value="year2004.html">2004</option>
+            <option value="year2005.html">2005</option>
+            <option value="year2006.html">2006</option>
+            <option value="year2007.html">2007</option>
+            <option value="year2008.html">2008</option>
+            <option value="year2009.html">2009</option>
+            <option value="year2010.html">2010</option>
+            <option value="year2011.html">2011</option>
+            <option value="year2012.html">2012</option>
+            <option value="year2013.html">2013</option>
+            <option value="year2014.html">2014</option>
+            <option value="year2015.html">2015</option>
+        </select>
+    </ul>
+</header>
+<main id="main">
+    <div id="chart"></div>
+</main>
+<div id="editor">
+    <textarea></textarea>
+    <div id="editor-toolbar">
+        <button id="editor-update">Update</button>
+        <button id="editor-refresh">Refresh All</button>
+        <button id="editor-close">Close</button>
+    </div>
+</div>
+
+<script src="lib/esl.js"></script>
+<script src="lib/jquery.min.js"></script>
+<script src="js/bootExample.js"></script>
+<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" id="code-source">
+
+
+
+
+
+
+
+    myChart.showLoading();
+
+    $.ajax({
+        url: './year/2003.json',
+        success: function (data) {
+            var markPointStyle = {
+                normal: {
+                    color: 'red'
+                }
+            }
+
+            // Airport: [name, city, country, longitude, latitude]
+            var countries = data.countries.map(function (item) {
+                return {
+                    itemStyle: markPointStyle,
+                    geoCoord: [item['longitude'], item['latitude']]
+                }
+            });
+
+
+            var lineGroupByGrade = {};
+            data.lines.forEach(function (line) {
+                var gradeName;
+                if (line['weight'] < 15){
+                    gradeName = 'low';
+                }
+                else if(line['weight'] < 100){
+                    gradeName = 'middle';
+                }
+                else{
+                    gradeName = 'high';
+                }
+                if (!lineGroupByGrade[gradeName]) {
+                    lineGroupByGrade[gradeName] = [];
+                }
+                lineGroupByGrade[gradeName].push(line);
+            })
+
+
+            var opts = {
+                title: {
+                    text: 'Google Scholar Connection',
+                    subtext: 'Data from Hazelnut',
+                    sublink: 'http://openflights.org/data.html',
+                    x:'center',
+                    y:'top',
+                    textStyle: {
+                        color: 'white'
+                    }
+                },
+                legend: {
+                    show: true,
+                    data: data.grades.map(function (item) {
+                        // Airline name
+                        return item[0];
+                    }),
+                    selected: {},
+                    x: 'left',
+                    orient: 'vertical',
+                    textStyle: {
+                        color: 'white'
+                    }
+                },
+                tooltip: {
+                    formatter: '{b}'
+                },
+                series: [{
+                    type: 'map3d',
+                    mapType: 'world',
+                    baseLayer: {
+                        backgroundColor: '',
+                        backgroundImage: 'asset/earth.jpg'
+                    },
+                    itemStyle: {
+                        normal: {
+                            borderWidth: 1,
+                            borderColor: 'yellow',
+                            areaStyle: {
+                                color: 'rgba(0, 0, 0, 0)'
+                            }
+                        }
+                    },
+                    markPoint: {
+                        effect: {
+                            shadowBlur: 0.2
+                        },
+                        large: true,
+                        symbolSize: 3,
+                        data: countries
+                    }
+                }]
+            };
+
+            opts.legend.data.forEach(function (name) {
+                if (name.indexOf('high') >= 0) {
+                    opts.legend.selected[name] = true;
+                } else {
+                    opts.legend.selected[name] = false;
+                }
+            });
+
+
+
+
+            var lines_high = lineGroupByGrade['high'];
+            if (lines_high) {
+                opts.series.push({
+                    type: 'map3d',
+                    name: 'high',
+                    markLine: {
+                        effect: {
+                            show: true
+                        },
+                        distance: 0.01,
+                        itemStyle: {
+                            normal: {
+                                width: 0.1,
+                                color: 'red',
+                                opacity: 0.1
+                            }
+                        },
+                        data: lines_high.map(function (item) {
+                            return [{
+                                // Source airport
+                                geoCoord: [item['longitude_1'], item['latitude_1']]
+                            }, {
+                                // Destination Airport
+                                geoCoord: [item['longitude_2'], item['latitude_2']]
+                            }]
+                        })
+                    }
+                });
+            }
+
+            var lines_middle = lineGroupByGrade['middle'];
+            if (lines_middle) {
+                opts.series.push({
+                    type: 'map3d',
+                    name: 'middle',
+                    markLine: {
+                        effect: {
+                            show: true
+                        },
+                        distance: 0.01,
+                        itemStyle: {
+                            normal: {
+                                width: 0.1,
+                                color: 'pink',
+                                opacity: 0.1
+                            }
+                        },
+                        data: lines_middle.map(function (item) {
+                            return [{
+                                // Source airport
+                                geoCoord: [item['longitude_1'], item['latitude_1']]
+                            }, {
+                                // Destination Airport
+                                geoCoord: [item['longitude_2'], item['latitude_2']]
+                            }]
+                        })
+                    }
+                });
+            }
+
+            var lines_low = lineGroupByGrade['low'];
+            if (lines_low) {
+                opts.series.push({
+                    type: 'map3d',
+                    name: 'low',
+                    markLine: {
+                        effect: {
+                            show: true
+                        },
+                        distance: 0.01,
+                        itemStyle: {
+                            normal: {
+                                width: 0.1,
+                                color: '#FFF8DC',
+                                opacity: 0.1
+                            }
+                        },
+                        data: lines_low.map(function (item) {
+                            return [{
+                                // Source airport
+                                geoCoord: [item['longitude_1'], item['latitude_1']]
+                            }, {
+                                // Destination Airport
+                                geoCoord: [item['longitude_2'], item['latitude_2']]
+                            }]
+                        })
+                    }
+                });
+            }
+
+            myChart.setOption(opts);
+
+            myChart.hideLoading();
+        }
+    });
+</script>
+
+</body>
+</head>
+</html>
