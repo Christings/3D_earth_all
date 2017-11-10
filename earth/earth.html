@@ -87,9 +87,6 @@
 
     var chart = echarts.init(document.getElementById('main'));
 
-
-
-
     $.getJSON('flights.json', function (data) {
         var airports = data.airports.map(function (item) {
             return {
@@ -202,7 +199,7 @@
             baseTexture: 'earth.jpg',
             environment: '#1D4551',
 
-            heightTexture: 'earth.jpg',
+//            heightTexture: 'earth.jpg',
 
 
             displacementScale: 0.1,
