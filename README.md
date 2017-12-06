@@ -19,3 +19,6 @@
 ## 7.earth-x
 ### 所用框架：echarts-x
 ### 基于3dmap重写了一个适合自身需要的最终地球。
+## 8.earth-x-other
+### 所用框架：echarts-x
+### 7写的地球一直有个问题，那就是myChart is not defind,直接用球没什么影响，但是放把球装进一个function里面，然后调用function时这个bug又来了导致无法刷新，所以echart-x-other换了一种引入方式，解决了这个问题。
