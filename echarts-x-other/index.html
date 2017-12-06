@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>echarts-x小示例</title>
+		<style></style>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			html,body{
+				height: 100%;
+			}
+			#main{
+				position: relative;
+				height: 100%;
+				display: none;
+			}
+			h1{
+				width: 90px;
+				height: 60px;
+				background: url(img/cloudpi.png) no-repeat;
+				position: absolute;
+				left: 10px;
+				top: 10px;
+				z-index: 1;
+			}
+			#cover{
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background: url("img/img_loading.gif") no-repeat  center #000000 ;
+				background-size: 50px 50px;
+				opacity: 0.3;
+				filter: alpha(opacity=30);
+			}
+		</style>
+	</head>
+	<body>
+		<h1></h1>
+		<div id="main"></div>
+		<div id="cover"></div>
+	</body>
+</html>
+<script src="js/echarts.js"></script>
+<script src="js/echarts-x.js"></script>
+<script src="js/jquery.min.js"></script>
+<script >
+	var img1=new Image();
+	var img2=new Image();
+	img1.src="img/starfield.jpg";
+	img2.src="img/earth.jpg";
+	img1.onload=function () {
+	    img1.loaded=true;
+	    if(img2.loaded){
+            var main=document.getElementById("main");
+            var cover=document.getElementById("cover");
+            main.style.display="block";
+            cover.style.display="none";
+		}
+    };
+    img2.onload=function () {
+        img2.loaded=true;
+        if(img1.loaded){
+            var main=document.getElementById("main");
+            var cover=document.getElementById("cover");
+            main.style.display="block";
+            cover.style.display="none";
+		}
+    };
+    $(function(){
+        var data;
+        $.ajax({
+            type: "get",
+            url: "http://10.10.12.171:8080/location?callback=fn",
+            dataType: "jsonp",
+            jsonp: "callback",
+            jsonpCallback:"fn",
+            success: function (data) {
+                window.data=data;
+                // 配置后续加载的各种 chart 配置 config
+                require.config({
+                    paths: {
+                        'echarts': 'js',
+                        'echarts-x': 'js'
+                    }
+                });
+                // 然后就可以动态加载图表进行绘制啦
+                require([
+                    'echarts',
+                    'echarts-x',
+                    // ECharts-X 中 map3d 的地图绘制基于 ECharts 中的 map。
+                    'echarts/chart/map',
+                    'echarts-x/chart/map3d'
+                ], function (ec) {
+                    // 跟 ECharts 一样的方式初始化
+                    var chart = ec.init(document.getElementById('main'));
+                    chart.setOption({
+                        tooltip: {
+                            formatter: '{b}'
+                        },
+                        series: [{
+                            name: 'placemarks',
+                            type: 'map3d',
+                            mapType: 'world',
+                            background: 'img/starfield.jpg',
+                            roam:{
+//			        	autoRotate:true,
+                                autoRotateAfterStill:1,
+                                focus:"China"
+                            },
+                            baseLayer: {
+                                backgroundColor: '#014a81',
+                                backgroundImage: 'img/earth.jpg',
+                                quality: 'high'
+                            },
+                            //日照
+                            light:{
+                                show:"true",//是否显示日照
+                                sunIntensity:1,//日照强度
+                                ambientIntensity: 0.7//环境光照强度
+                            },
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: false
+                                    },
+                                    borderWidth: 1,
+                                    borderColor: 'yellow',
+                                    areaStyle: {
+                                        color: 'rgba(0, 0, 0, 0)'
+                                    }
+                                }
+                            },
+                            markPoint: {
+                                symbol: 'image://./img/add2.png',
+                                symbolSize: 2,
+                                distance: 0,
+                                // orientation: 'normal',
+                                orientationAngle: 45,
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: false,
+                                            formatter: '{b}',
+                                            // position: 'right',
+                                            textStyle: {
+                                                fontSize: 24,
+                                                color: 'white'
+                                            }
+                                        }
+                                    }
+                                },
+                                data: window.data
+                            }
+                        }]
+                    });
+                })
+            }
+        });
+	})
+</script>

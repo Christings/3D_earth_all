@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>echarts-x小示例</title>
+		<style></style>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			html,body,#main{
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main"></div>
+	</body>
+</html>
+<script src="js/echarts.js"></script>
+<script src="js/echarts-x.js"></script>
+<script >
+	 // 配置后续加载的各种 chart 配置 config
+        require.config({
+            paths: {
+                'echarts': 'js',
+                'echarts-x': 'js'
+            }
+        });
+
+        // 然后就可以动态加载图表进行绘制啦
+        require([
+            'echarts',
+            'echarts-x',
+            // ECharts-X 中 map3d 的地图绘制基于 ECharts 中的 map。
+            'echarts/chart/map',
+            'echarts-x/chart/map3d'
+        ], function (ec) {
+            // 跟 ECharts 一样的方式初始化
+            var chart = ec.init(document.getElementById('main'));
+			chart.setOption({
+			    title: {
+			        text: '小云派用户分布图',
+			        subtext: 'From businessinsider',
+			        sublink: 'http://xiaoyunpai.cn',
+			        x: 'center',
+			        y: 'top',
+			        textStyle: {
+			            color: 'white'
+			        }
+			    },
+			    //鼠标悬浮时，显示地图国家的区域名称
+			    tooltip: {
+			        formatter: '{b}'
+			    },
+			    series: [{
+			        type: 'map3d',
+			        background:"img/starfield.jpg",//星空背景图片
+			        baseLayer:{
+			        	backgroundColor: '#63B8FF',//地球的背景颜色
+			        	backgroundImage: 'img/earth.jpg',//地球背景图片
+			        	quality: 'high'
+			        },
+			        //日照
+			        light:{
+			        	show:"true",//是否显示日照
+			        	sunIntensity:2,//日照强度
+			        	ambientIntensity: 0.6//环境光照强度
+			        },
+			        itemStyle: {
+			            normal: {
+			                label: {
+			                    show: false
+			                },
+			                borderWidth: 1,
+			                borderColor: 'yellow',
+			                areaStyle: {
+			                    color: 'rgba(0, 0, 0, 0)'
+			                }
+			            }
+			        },
+			        roam:{
+			        	autoRotateAfterStill:1,//交互后1s重新自动旋转
+			        	focus:"Myanmar"//开始聚焦在中国
+			        },
+			        markPoint: {
+			            symbol: 'image://./img/add2.png',
+			            symbolSize: 2,
+			            distance: 0,
+			            // orientation: 'normal',
+			            orientationAngle: 45,
+			            itemStyle: {
+			                normal: {
+			                    label: {
+			                        show: false,
+			                        formatter: '{b}',
+			                        // position: 'right',
+			                        textStyle: {
+			                            fontSize: 24,
+			                            color: 'white'
+			                        }
+			                    }
+			                }
+			            },
+			            data: [{
+			                name: 'ip:127.0.0.2   电话：15000000000',
+			                geoCoord: [-72.544963, -13.163141]
+			            }, {
+			                name: 'ip:127.0.0.1   电话：15000000000',
+			                geoCoord: [103.866986, 13.412469]
+			            }, {
+			                name: 'ip:127.0.0.3   电话：15000000000',
+			                geoCoord: [78.042155, 27.175015]
+			            }, {
+			                name: 'ip:127.0.0.4   电话：15000000000',
+			                geoCoord: [35.4428063, 30.3251545]
+			            }, {
+			                name: 'ip:127.0.0.5   电话：15000000000',
+			                geoCoord: [103.8616785, 13.4399061]
+			            }, {
+			                name: 'ip:127.0.0.6   电话：15000000000',
+			                geoCoord: [-4.779387, 37.878906]
+			            }, {
+			                name: 'ip:127.0.0.7   电话：15000000000',
+			                geoCoord: [30.3289, 59.9401]
+			            }, {
+			                name: 'ip:127.0.0.8   电话：15000000000',
+			                geoCoord: [12.453937, 41.902167]
+			            }, {
+			                name: 'ip:127.0.0.9   电话：15000000000',
+			                geoCoord: [18.1064995, 42.642481]
+			            }, {
+			                name: 'ip:127.0.0.10   电话：15000000000',
+			                geoCoord: [19.936756, 50.061897]
+			            }, {
+			                name: 'ip:127.0.0.11   电话：15000000000',
+			                geoCoord: [32.65727, 25.718835]
+			            }, {
+			                name: 'ip:127.0.0.12   电话：15000000000',
+			                geoCoord: [-115.174232, 36.112947]
+			            }, {
+			                name: 'ip:127.0.0.13   电话：15000000000',
+			                geoCoord: [54.474779, 24.413679]
+			            }, {
+			                name: 'ip:127.0.0.14   电话：15000000000',
+			                geoCoord: [-3.2225188, 39.3947303]
+			            }, {
+			                name: 'ip:127.0.0.15   电话：15000000000',
+			                geoCoord: [-77.2379262, 39.8154696]
+			            }, {
+			                name: 'ip:127.0.0.16   电话：15000000000',
+			                geoCoord: [-3.588141, 37.176078]
+			            }, {
+			                name: 'ip:127.0.0.17   电话：15000000000',
+			                geoCoord: [116.5604055, 40.430837]
+			            }, {
+			                name: 'ip:127.0.0.18   电话：15000000000',
+			                geoCoord: [96.149198, 16.798313]
+			            }, {
+			                name: 'ip:127.0.0.19   电话：15000000000',
+			                geoCoord: [-157.9519192, 21.364834]
+			            }, {
+			                name: 'ip:127.0.0.20   电话：15000000000',
+			                geoCoord: [-43.372762, -22.9361413]
+			            }, {
+			                name: 'ip:127.0.0.21   电话：15000000000',
+			                geoCoord: [-73.9822225, 40.7560311]
+			            }, {
+			                name: 'ip:127.0.0.22   电话：15000000000',
+			                geoCoord: [-8.544641, 42.880596]
+			            }, {
+			                name: 'ip:127.0.0.23   电话：15000000000',
+			                geoCoord: [-122.478255, 37.819929]
+			            }, {
+			                name: 'ip:127.0.0.24   电话：15000000000',
+			                geoCoord: [-81.091277, 32.073383]
+			            }, {
+			                name: 'ip:127.0.0.25   电话：15000000000',
+			                geoCoord: [11.328907, 43.317702]
+			            }]
+			        },
+			        // Empty data
+			        data: [{}]
+			    }]
+			})
+       })
+</script>
